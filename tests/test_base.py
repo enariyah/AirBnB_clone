@@ -15,6 +15,16 @@ class TestBase(unittest.TestCase):
         self.assertEqual(type(base.created_at), datetime)
         self.assertEqual(type(base.updated_at), datetime)
 
+    def test_init_kwargs(self):
+        """Test the initilisation using kwargs argument"""
+        base = BaseModel()
+        base_dict = base.to_dict()
+        base_copy = BaseModel(**base_dict)
+        self.assertEqual(type(base_copy.created_at), datetime)
+        self.assertEqual(type(base_copy.updated_at), datetime)
+        self.assertEqual(base_dict, base_copy.to_dict())
+        self.assertFalse(base_copy is base)
+
     def test_save(self):
         """Tests the instance method save"""
         base = BaseModel()
