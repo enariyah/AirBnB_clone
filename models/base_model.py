@@ -2,6 +2,7 @@
 """This module contains the base class"""
 import uuid
 from datetime import datetime
+from models import storage
 
 
 class BaseModel:
@@ -20,6 +21,7 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            storage.new(self)
 
     def __str__(self) -> str:
         """Returns a string representation of a BaseModel instance"""
@@ -28,12 +30,16 @@ class BaseModel:
     def save(self) -> None:
         """Updates the updated_at attribute of an instance"""
         self.updated_at = datetime.now()
+        storage.save()
 
     def to_dict(self) -> dict:
         """Returns a dictionary representation of the instance"""
-        ins_dict = self.__dict__.copy()
-        ins_dict["__class__"] = type(self).__name__
-        ins_dict["created_at"] = self.created_at.isoformat()
-        ins_dict["updated_at"] = self.updated_at.isoformat()
+        ins_dict = {}
+        ins_dict['__class__'] = self.__class__.__name__
+        for key, val in self.__dict__.items():
+            if isinstance(val, datetime):
+                ins_dict[key] = val.isoformat()
+            else:
+                ins_dict[key] = val
 
         return (ins_dict)
