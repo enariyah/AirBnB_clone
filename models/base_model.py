@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """This module contains the base class"""
 import uuid
 from datetime import datetime
@@ -20,9 +20,11 @@ class BaseModel:
         """Updates the updated_at attribute of an instance"""
         self.updated_at = datetime.now()
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Returns a dictionary representation of the instance"""
         ins_dict = self.__dict__
         ins_dict["__class__"] = type(self).__name__
         ins_dict["created_at"] = self.created_at.isoformat()
         ins_dict["updated_at"] = self.updated_at.isoformat()
+
+        return (ins_dict)
