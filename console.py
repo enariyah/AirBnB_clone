@@ -99,7 +99,7 @@ class HBNBCommand(cmd.Cmd):
             print(class_dict)
 
     def do_update(self, line):
-        """Updates an instance based on the class name and id"""
+        """Updates an instance based on the Class name and id"""
         if line:
             args = line.strip().split()
             if args[0] not in class_names:
