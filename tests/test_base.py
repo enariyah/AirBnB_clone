@@ -33,7 +33,7 @@ class TestBase(unittest.TestCase):
         base.save()
         self.assertTrue("name" in base.__dict__)
         self.assertTrue(base.updated_at > old_time)
-    
+
     def test_to_dict(self):
         """Tests the to_dict instance method of BaseModel class"""
         base = BaseModel()
@@ -49,5 +49,6 @@ class TestBase(unittest.TestCase):
     def test_print(self):
         """Tests the __str__ method of the BaseModel class"""
         base = BaseModel()
-        expected_output = f"[{type(base).__name__}] ({base.id}) {base.__dict__}"
+        expected_output = f"[{type(base).__name__}] ({base.id})"
+        expected_output += f" {base.__dict__}"
         self.assertEqual(base.__str__(), expected_output)
