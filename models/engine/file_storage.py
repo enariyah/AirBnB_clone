@@ -33,9 +33,15 @@ class FileStorage:
         If the file doesn't exist, no exception should be raised)
         """
         from models.base_model import BaseModel
+        from models.user import User
         try:
             with open(self.__file_path, "r", encoding="utf-8") as f:
-                json_dict = {k: BaseModel(**v) for k, v in json.load(f).items()}
+                json_dict = {}
+                for k, v in json.load(f).items():
+                    if v['__class__'] == 'BaseModel':
+                        json_dict[k] = BaseModel(**v)
+                    elif v['__class__'] == 'User':
+                        json_dict[k] = User(**v)
                 FileStorage.__objects = json_dict
         except FileNotFoundError:
             pass
