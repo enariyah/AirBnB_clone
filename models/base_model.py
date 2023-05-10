@@ -14,9 +14,9 @@ class BaseModel:
                 if key == '__class__':
                     continue
                 if key in ['created_at', 'updated_at']:
-                    self.__setattr__(key, datetime.fromisoformat(kwargs[key]))
+                    setattr(self, key, datetime.fromisoformat(kwargs[key]))
                 else:
-                    self.__setattr__(key, kwargs[key])
+                    setattr(self, key, kwargs[key])
         else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
@@ -25,7 +25,7 @@ class BaseModel:
 
     def __str__(self) -> str:
         """Returns a string representation of a BaseModel instance"""
-        return (f"[{type(self).__name__}] ({self.id}) {self.__dict__}")
+        return (f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}")
 
     def save(self) -> None:
         """Updates the updated_at attribute of an instance"""
