@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 """Tests for the BaseModel class"""
+import os
 import unittest
 from datetime import datetime
 from models.base_model import BaseModel
+from models import storage
 
 
 class TestBase(unittest.TestCase):
@@ -52,3 +54,22 @@ class TestBase(unittest.TestCase):
         expected_output = f"[{type(base).__name__}] ({base.id})"
         expected_output += f" {base.__dict__}"
         self.assertEqual(base.__str__(), expected_output)
+
+    def test_storage_all(self):
+        """Tests retrieval of stored objects"""
+        self.assertEqual(type(storage.all()), dict)
+        self.assertEqual(len(storage.all()) % 4, 0)
+
+    def test_storage_new(self):
+        """Tests serialization of a BaseModel instance"""
+        prev_size = len(storage.all())
+        base = BaseModel()
+        key = f"{base.__class__.__name__}.{base.id}"
+        self.assertTrue(key in storage.all())
+        self.assertEqual(storage.all()[key], base)
+        self.assertEqual(len(storage.all()), prev_size + 1)
+
+    def test_storage_reload_nonexistent(self):
+        if os.path.exists("../file.json"):
+            os.remove("../file.json")
+        self.assertEqual(storage.reload(), None)
