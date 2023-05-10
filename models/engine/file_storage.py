@@ -42,19 +42,19 @@ class FileStorage:
         from models.place import Place
         from models.review import Review
         class_names = {
-            'BaseModel' : BaseModel,
-            'User' : User,
-            'State' : State,
-            'City' : City,
-            'Amenity' : Amenity,
-            'Place' : Place,
-            'Review' : Review
+            'BaseModel': BaseModel,
+            'User': User,
+            'State': State,
+            'City': City,
+            'Amenity': Amenity,
+            'Place': Place,
+            'Review': Review
         }
         try:
             with open(self.__file_path, "r", encoding="utf-8") as f:
                 json_dict = {}
                 for k, v in json.load(f).items():
-                        json_dict[k] = class_names[v['__class__']](**v)
+                    json_dict[k] = class_names[v['__class__']](**v)
                 FileStorage.__objects = json_dict
         except FileNotFoundError:
             pass
