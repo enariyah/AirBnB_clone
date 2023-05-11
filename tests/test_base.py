@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 """Tests for the BaseModel class"""
 import os
+import json
 import unittest
+from unittest.mock import patch
 from datetime import datetime
 from models.base_model import BaseModel
 from models import storage
@@ -74,19 +76,58 @@ class TestBase(unittest.TestCase):
 
     def test_storage_all(self):
         """Tests retrieval of stored objects"""
-        self.assertEqual(type(storage.all()), dict)
-        self.assertEqual(len(storage.all()) % 7, 0)
+        self.assertIsInstance(storage.all(), dict)
+        self.assertIs(storage.all(), storage._FileStorage__objects)
 
     def test_storage_new(self):
         """Tests serialization of a BaseModel instance"""
         prev_size = len(storage.all())
         base = BaseModel()
         key = f"{base.__class__.__name__}.{base.id}"
-        self.assertTrue(key in storage.all())
+        self.assertIn(key, storage.all())
         self.assertEqual(storage.all()[key], base)
         self.assertEqual(len(storage.all()), prev_size + 1)
+
+    def test_storage_save(self):
+        """Tests that json serialization is correctly stored in file"""
+        new_base = BaseModel()
+        key = f"{new_base.__class__.__name__}.{new_base.id}"
+        storage.save()
+        with open("file.json", "r", encoding="utf-8") as f:
+            json_dict = json.load(f)
+        self.assertIn(key, json_dict)
+        self.assertEqual(json_dict[key], new_base.to_dict())
+        objects_dict = {}
+        for key, val in storage._FileStorage__objects.items():
+            objects_dict[key] = val.to_dict()
+        self.assertEqual(json_dict, objects_dict)
+
+    def test_storage_reload_exists(self):
+        """Tests that deserialization happens correctly"""
+        if os.path.exists("../file.json"):
+            storage.reload()
+        else:
+            base = BaseModel()
+            base.save()
+            storage.reload()
+        with open("file.json", "r", encoding="utf-8") as f:
+            json_dict = json.load(f)
+        for key, val in json_dict.items():
+            self.assertIn(key, storage._FileStorage__objects)
+            self.assertEqual(val, storage._FileStorage__objects[key].to_dict())
 
     def test_storage_reload_nonexistent(self):
         if os.path.exists("../file.json"):
             os.remove("../file.json")
         self.assertEqual(storage.reload(), None)
+
+    def test_save_method_of_file_storage_is_called(self):
+        test_model = BaseModel()
+        with patch('models.engine.file_storage.FileStorage.save') as mock_save:
+            test_model.save()
+            mock_save.assert_called_once()
+
+    def test_new_method_of_file_storage_is_called(self):
+        with patch('models.engine.file_storage.FileStorage.new') as mock_new:
+            test_model = BaseModel()
+            mock_new.assert_called_once_with(test_model)
