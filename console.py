@@ -28,6 +28,22 @@ class HBNBCommand(cmd.Cmd):
         """Does nothing"""
         pass
 
+    def default(self, line: str) -> None:
+        args = ""
+        line_args = line.split('.', 1)
+        line_cpy = line_args[1][line_args[1].index('(') + 1:-1]
+        args += line_args[0] + ' ' + line_cpy.strip('"')
+        command = line_args[1][:line_args[1].index('(')]
+        if command == "count":
+            n = 0
+            for key in storage.all():
+                if key.startswith(args[0]):
+                    n += 1
+            print(n)
+        else:
+            func = getattr(self, 'do_' + command)
+            func(args)
+
     def do_quit(self, line):
         """quit command exits the program"""
         return True
@@ -40,7 +56,9 @@ class HBNBCommand(cmd.Cmd):
         """Creates a new instance of BaseModel"""
         if line:
             if line in class_names:
-                print(class_names[line]().id)
+                obj = class_names[line]()
+                obj.save()
+                print(obj.id)
             else:
                 print("** class doesn't exist **")
         else:
@@ -84,6 +102,7 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, line):
         """Prints all string representation of all instances"""
         if line:
+            line = line.strip()
             if line not in class_names:
                 print("** class doesn't exist **")
             else:
