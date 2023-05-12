@@ -121,6 +121,7 @@ class HBNBCommand(cmd.Cmd):
         """Updates an instance based on the Class name and id"""
         if line:
             args = line.strip().split()
+            args = [arg.strip(',"') for arg in args]
             if args[0] not in class_names:
                 print("** class doesn't exist **")
             elif len(args) < 2:
@@ -135,6 +136,7 @@ class HBNBCommand(cmd.Cmd):
                     print("** no instance found **")
                 else:
                     setattr(storage.all()[key], args[2], args[3])
+                    storage.all()[key].save()
         else:
             print("** class name missing **")
 
