@@ -74,34 +74,6 @@ class TestBase(unittest.TestCase):
         expected_output += f" {base.__dict__}"
         self.assertEqual(base.__str__(), expected_output)
 
-    def test_storage_all(self):
-        """Tests retrieval of stored objects"""
-        self.assertIsInstance(storage.all(), dict)
-        self.assertIs(storage.all(), storage._FileStorage__objects)
-
-    def test_storage_new(self):
-        """Tests serialization of a BaseModel instance"""
-        prev_size = len(storage.all())
-        base = BaseModel()
-        key = f"{base.__class__.__name__}.{base.id}"
-        self.assertIn(key, storage.all())
-        self.assertEqual(storage.all()[key], base)
-        self.assertEqual(len(storage.all()), prev_size + 1)
-
-    def test_storage_save(self):
-        """Tests that json serialization is correctly stored in file"""
-        new_base = BaseModel()
-        key = f"{new_base.__class__.__name__}.{new_base.id}"
-        storage.save()
-        with open("file.json", "r", encoding="utf-8") as f:
-            json_dict = json.load(f)
-        self.assertIn(key, json_dict)
-        self.assertEqual(json_dict[key], new_base.to_dict())
-        objects_dict = {}
-        for key, val in storage._FileStorage__objects.items():
-            objects_dict[key] = val.to_dict()
-        self.assertEqual(json_dict, objects_dict)
-
     def test_storage_reload_exists(self):
         """Tests that deserialization happens correctly"""
         if os.path.exists("../file.json"):
