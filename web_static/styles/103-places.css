@@ -18,11 +18,23 @@ section.places article {
     border: 1px solid #FF5A5F;
     border-radius: 4px;
     z-index: -1;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 section.places article > h2 {
     font-size: 30px;
     text-align: center;
+    width: 100%;
+}
+
+section.places article h2,
+section.places article .information,
+section.places article .user,
+section.places article .description,
+section.places article .amenities,
+section.places article .reviews {
+    width: 100%;
 }
 
 section.places .price_by_night {
@@ -79,4 +91,65 @@ section.places .user {
 
 footer {
     position: sticky;
+}
+
+section.places .amenities {
+    margin-top: 40px;
+}
+
+section.places .amenities h2,
+section.places .reviews h2 {
+    font-size: 16px;
+    border-bottom: 1px solid #DDDDDD;
+}
+
+section.places .amenities ul,
+section.places .reviews ul {
+    list-style: none;
+    padding: 0;
+}
+
+section.places .amenities li {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: center;
+    margin-bottom: 10px;
+    align-items: end;
+}
+
+section.places .tv {
+    background-image: url('../images/icon_tv.png');
+}
+
+section.places .wifi {
+    background-image: url('../images/icon_wifi.png');
+}
+
+section.places .pets {
+    background-image: url('../images/icon_pets.png');
+}
+
+section.places .tv,
+section.places .wifi,
+section.places .pets {
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+section.places .amenities h3,
+section.places .reviews h3 {
+    font-size: 14px;
+    margin: 0;
+}
+
+section.places .amenities p,
+section.places .reviews p {
+    font-size: 12px;
+    margin: 0;
+    margin-bottom: 10px;
 }
